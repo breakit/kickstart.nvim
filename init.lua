@@ -687,22 +687,28 @@ do
     end,
   })
 
+  vim.pack.add {
+    gh 'neovim/nvim-lspconfig',
+  }
+
   -- Enable the following language servers
   --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
   --  See `:help lsp-config` for information about keys and how to configure
   ---@type table<string, vim.lsp.Config>
   local servers = {
     -- clangd = {},
-    -- gopls = {},
-    -- pyright = {},
-    -- rust_analyzer = {},
+    --gopls = {},
+    pyright = {},
+    rust_analyzer = {},
     --
     -- Some languages (like typescript) have entire language plugins that can be useful:
     --    https://github.com/pmizio/typescript-tools.nvim
     --
     -- But for many setups, the LSP (`ts_ls`) will work just fine
     -- ts_ls = {},
-
+    biome = {},
+    html = {},
+    emmet_language_server = {},
     stylua = {}, -- Used to format Lua code
 
     -- Special Lua Config, as recommended by neovim help docs
@@ -741,7 +747,6 @@ do
   }
 
   vim.pack.add {
-    gh 'neovim/nvim-lspconfig',
     gh 'mason-org/mason.nvim',
     gh 'mason-org/mason-lspconfig.nvim',
     gh 'WhoIsSethDaniel/mason-tool-installer.nvim',
@@ -936,7 +941,7 @@ do
       local language = vim.treesitter.language.get_lang(filetype)
       if not language then return end
 
-      local installed_parsers = require('nvim-treesitter').get_installed 'parsers'
+      local installed_parsers = require('nvim-treesitter').get_installed()
 
       if vim.tbl_contains(installed_parsers, language) then
         -- Enable the parser if it is already installed
