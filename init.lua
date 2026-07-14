@@ -171,6 +171,8 @@ do
   -- instead raise a dialog asking if you wish to save the current file(s)
   -- See `:help 'confirm'`
   vim.o.confirm = true
+
+  vim.opt.swapfile = false
 end
 
 -- ============================================================
@@ -707,7 +709,6 @@ do
     -- But for many setups, the LSP (`ts_ls`) will work just fine
     -- ts_ls = {},
     biome = {},
-    html = {},
     emmet_language_server = {},
     stylua = {}, -- Used to format Lua code
 
@@ -787,8 +788,14 @@ do
     format_on_save = function(bufnr)
       -- You can specify filetypes to autoformat on save here:
       local enabled_filetypes = {
-        -- lua = true,
-        -- python = true,
+        lua = true,
+        python = true,
+        javascript = true,
+        javascriptreact = true,
+        typescript = true,
+        typescriptreact = true,
+        svelte = true,
+        css = true,
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
         return { timeout_ms = 500 }
@@ -807,6 +814,22 @@ do
       --
       -- You can use 'stop_after_first' to run the first available formatter from the list
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      javascript = { 'oxfmt', 'prettierd', 'prettier', stop_after_first = true },
+      javascriptreact = { 'oxfmt', 'prettierd', 'prettier', stop_after_first = true },
+      typescript = { 'oxfmt', 'prettired', 'prettier', stop_after_first = true },
+      typescriptreact = { 'oxfmt', 'prettired', 'prettier', stop_after_first = true },
+      svelte = { 'oxfmt', 'prettired', 'prettier', stop_after_first = true },
+      css = { 'oxfmt', 'prettierd', 'prettier', stop_after_first = true },
+      json = { 'oxfmt', 'prettired', 'prettier', stop_after_first = true },
+    },
+    formatters = {
+      oxfmt = {
+        command = 'oxfmt',
+        -- Force oxfmt to read clean stdin stream and dynamically grab the current file extension
+        args = { '-' },
+        -- Ensure conform pipes the text directly to stdin
+        to_stdin = true,
+      },
     },
   }
 
@@ -908,9 +931,47 @@ do
   -- NOTE: You can also specify a branch or a specific commit
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
+  local ts_config = require 'nvim-treesitter.config'
+
+  ts_config.setup {
+    highlight = {
+      enable = true,
+      additional_vim_regex_highlighting = false,
+    },
+    indent = {
+      enable = true,
+    },
+  }
+
   -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  local parsers = {
+    'bash',
+    'c',
+    'diff',
+    'html',
+    'lua',
+    'luadoc',
+    'markdown',
+    'markdown_inline',
+    'query',
+    'vim',
+    'vimdoc',
+    'css',
+    'javascript',
+    'typescript',
+    'tsx',
+    'css',
+    'scss',
+    'json',
+    'yaml',
+    'bash',
+    'markdown',
+    'markdown_inline',
+  }
   require('nvim-treesitter').install(parsers)
+
+  vim.treesitter.language.register('javascript', 'jsx')
+  vim.treesitter.language.register('tsx', 'typescriptreact')
 
   ---@param buf integer
   ---@param language string
@@ -918,6 +979,8 @@ do
     -- Check if a parser exists and load it
     if not vim.treesitter.language.add(language) then return end
     -- Enable syntax highlighting and other treesitter features
+    --
+
     vim.treesitter.start(buf, language)
 
     -- Enable treesitter based folds
@@ -982,6 +1045,8 @@ do
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   require 'custom.plugins'
+
+  require('custom.plugins.liveserver').setup()
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
