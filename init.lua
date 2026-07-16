@@ -245,6 +245,9 @@ do
   -- [[ Basic Autocommands ]]
   --  See `:help lua-guide-autocommands`
 
+  vim.keymap.set('i', 'jk', '<Esc>', { desc = 'Exit insert mode with jk' })
+  vim.keymap.set('v', 'jk', '<Esc>', { desc = 'Exit visual mode with jk' })
+
   -- Highlight when yanking (copying) text
   --  Try it with `yap` in normal mode
   --  See `:help vim.hl.on_yank()`
