@@ -196,8 +196,8 @@ do
     underline = { severity = { min = vim.diagnostic.severity.WARN } },
 
     -- Can switch between these as you prefer
-    virtual_text = true, -- Text shows up at the end of the line
-    virtual_lines = false, -- Text shows up underneath the line, with virtual lines
+    virtual_text = false, -- Text shows up at the end of the line
+    virtual_lines = true, -- Text shows up underneath the line, with virtual lines
 
     -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
     jump = {
@@ -375,6 +375,7 @@ do
       { '<leader>t', group = '[T]oggle' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
       { 'gr', group = 'LSP Actions', mode = { 'n' } },
+      { '<leader>f', group = '[F]ormat', mode = { 'n', 'v' } },
     },
   }
 
@@ -707,8 +708,21 @@ do
     --    https://github.com/pmizio/typescript-tools.nvim
     --
     -- But for many setups, the LSP (`ts_ls`) will work just fine
-    -- ts_ls = {},
+    ts_ls = {},
+    oxlint = {},
     biome = {},
+    html = {
+      settings = {
+        html = {
+          format = { enable = false }, -- Disable HTML formatting (handled by conform/oxfmt)
+          embeddedLanguages = {
+            css = true,
+            javascript = true,
+          },
+          autoClosingTags = true,
+        },
+      },
+    },
     emmet_language_server = {},
     stylua = {}, -- Used to format Lua code
 
@@ -816,19 +830,15 @@ do
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
       javascript = { 'oxfmt', 'prettierd', 'prettier', stop_after_first = true },
       javascriptreact = { 'oxfmt', 'prettierd', 'prettier', stop_after_first = true },
-      typescript = { 'oxfmt', 'prettired', 'prettier', stop_after_first = true },
-      typescriptreact = { 'oxfmt', 'prettired', 'prettier', stop_after_first = true },
-      svelte = { 'oxfmt', 'prettired', 'prettier', stop_after_first = true },
+      typescript = { 'oxfmt', 'prettierd', 'prettier', stop_after_first = true },
+      typescriptreact = { 'oxfmt', 'prettierd', 'prettier', stop_after_first = true },
+      svelte = { 'oxfmt', 'prettierd', 'prettier', stop_after_first = true },
       css = { 'oxfmt', 'prettierd', 'prettier', stop_after_first = true },
-      json = { 'oxfmt', 'prettired', 'prettier', stop_after_first = true },
+      json = { 'oxfmt', 'prettierd', 'prettier', stop_after_first = true },
     },
     formatters = {
       oxfmt = {
         command = 'oxfmt',
-        -- Force oxfmt to read clean stdin stream and dynamically grab the current file extension
-        args = { '-' },
-        -- Ensure conform pipes the text directly to stdin
-        to_stdin = true,
       },
     },
   }
