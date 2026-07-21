@@ -728,6 +728,15 @@ do
     },
     emmet_language_server = {},
     stylua = {}, -- Used to format Lua code
+    svelte = {},
+    abl = {
+      cmd = { 'abl-language-server' },
+      filetypes = { 'abl' },
+      root_dir = function(fname) return vim.fs.root(fname, { 'abl.toml', '.git' }) or vim.fn.getcwd() end,
+      settings = {
+        formatting = { enabled = true },
+      },
+    },
 
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
@@ -780,7 +789,9 @@ do
   --    :Mason
   --
   -- You can press `g?` for help in this menu.
-  local ensure_installed = vim.tbl_keys(servers or {})
+  local ensure_installed = vim.tbl_filter(function(s)
+    return s ~= 'abl' -- installed manually, not in Mason
+  end, vim.tbl_keys(servers or {}))
   vim.list_extend(ensure_installed, {
     -- You can add other tools here that you want Mason to install
   })
@@ -956,6 +967,8 @@ do
     },
   }
 
+  require 'custom.plugins.abl'
+
   -- Ensure basic parsers are installed
   local parsers = {
     'bash',
@@ -980,11 +993,13 @@ do
     'bash',
     'markdown',
     'markdown_inline',
+    'abl',
   }
   require('nvim-treesitter').install(parsers)
 
   vim.treesitter.language.register('javascript', 'jsx')
   vim.treesitter.language.register('tsx', 'typescriptreact')
+  vim.treesitter.language.register('abl', 'abl')
 
   ---@param buf integer
   ---@param language string
